@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+
+  <title>Title</title>
+
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500&display=swap" rel="stylesheet">
+  <link href="https://unpkg.com/tailwindcss@^2/dist/tailwind.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.2/css/all.min.css">
+
+  <style>
+    body{
+      font-family: 'Montserrat', sans-serif;
+      font-size:14px;
+    }
+  </style>
+</head>
+<body class="bg-gray-50">
+  <div id="app">
+    <div class="h-8 flex items-center justify-center mt-10 mb-8">
+      <input
+        v-model="page"
+        type="text"
+        class="h-full px-2 py-1 w-72 rounded-l shadow-md"
+        placeholder="Enter website url for indexing"
+        @keypress.enter="addPage"
+      >
+      <button
+        :class="`bg-blue-${ page.length ? 500 : 300 } text-white h-full px-3 rounded-r shadow-lg`"
+        @click="addPage"
+      >Index</button>
+    </div>
+
+    <div class="container mx-auto p-5 gap-5 grid grid-cols-3">
+      <div
+        class="h-56 w-full bg-white rounded shadow-lg hover:shadow-2xl transition-shadow"
+        v-for="page in pages"
+      >
+        {{ page.url }}
+      </div>
+    </div>
+  </div>
+
+  <script src="http://localhost/socket.io/socket.io.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vue@2.6.12/dist/vue.js"></script>
+  <script>
+    const socket = io();
+
+    const vue = new Vue({
+      el: '#app',
+      data: {
+        page: '',
+        pages: []
+      },
+      methods: {
+        addPage(){
+          const page = this.page.trim();
+          if(!page.length) return;
+
+          try{
+            new URL(page)
+          }catch (e){
+            return alert('url is not valid');
+          }
+
+          socket.emit('index', page)
+          this.page = '';
+        }
+      }
+    })
+  </script>
+</body>
+</html>

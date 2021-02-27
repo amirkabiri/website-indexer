@@ -1,0 +1,23 @@
+{
+  "name": "website-indexer",
+  "version": "1.0.0",
+  "scripts": {
+    "dev": "node -r esm ./src/index.js",
+    "watch": "nodemon -e js --exec npm run dev"
+  },
+  "dependencies": {
+    "axios": "^0.21.1",
+    "dotenv-flow": "^3.2.0",
+    "ejs": "^3.1.6",
+    "esm": "^3.2.25",
+    "express": "^4.17.1",
+    "jsdom": "^16.4.0",
+    "mongoose": "^5.11.18",
+    "mongoose-auto-increment": "^5.0.1",
+    "natural": "^4.0.0",
+    "socket.io": "^3.1.2"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.7"
+  }
+}
