@@ -30,6 +30,9 @@ export default socket => async startPoint => {
       const url = queue.pop();
       if(await PageModel.findOne({ url })) continue;
 
+      // create page at first, to prevent crawling pages again that had error
+      const page = await PageModel.create({ url, host });
+
       const extractor = await (new Extractor(new URL(url)).fetch());
       // if Content-Type of page is not text/html, then continue
       if(!extractor) continue;
@@ -50,13 +53,10 @@ export default socket => async startPoint => {
         terms[token] ++;
       }
 
-      const page = await PageModel.create({
-        url,
-        tokensCount: tokens.length,
-        termsCount,
-        length: texts.length,
-        host
-      })
+      page.tokensCount = tokens.length;
+      page.termsCount = termsCount;
+      page.length = texts.length;
+      await page.save();
 
       for(const value in terms){
         let term = await TermModel.findOne({ value })

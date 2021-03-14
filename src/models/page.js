@@ -10,13 +10,12 @@ const schema = new Schema({
     set: url => urlNormalizer(url),
     unique: true
   },
-  tokensCount: Number,
-  termsCount: Number,
-  length: Number,
+  tokensCount: { type: Number, default: 0 },
+  termsCount: { type: Number, default: 0 },
+  length: { type: Number, default: 0 },
   host: {
     type: Schema.Types.ObjectId,
-    ref: 'Host',
-    required: true
+    ref: 'Host'
   }
 })
 
