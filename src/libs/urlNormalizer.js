@@ -11,5 +11,7 @@ export default function urlNormalizer(url){
     url.hostname = url.hostname.substr(4)
   }
 
+  url.hash = '';
+
   return url.toString()
 }
