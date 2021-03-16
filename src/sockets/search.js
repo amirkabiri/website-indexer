@@ -10,7 +10,11 @@ export default socket => async (target, emit) => {
   let query = {};
   const terms = {};
   const pages = {};
+  const pagesTermsTable = {};
   const pagesCount = await Page.countDocuments();
+  const averagePageLength = (await Page.aggregate([
+    { $group: { _id: "", length: {$avg : "$length" }} }
+  ]))[0].length;
 
   // calculating query terms and frequencies
   for(const value of stemmer(tokenizer(target))){
@@ -32,29 +36,36 @@ export default socket => async (target, emit) => {
     }
   }
 
-  // calculation document vectors (pages object)
+  // calculation document vectors (pagesTermsTable object)
   for(const term of Object.values(terms)){
     for(const page of term.pages){
-       if(pages[page._id] === undefined){
-         pages[page._id] = {};
+       if(pagesTermsTable[page._id] === undefined){
+         pagesTermsTable[page._id] = {};
        }
 
-      pages[page._id][term.value] = page.frequency;
+      pagesTermsTable[page._id][term.value] = page.frequency;
     }
+  }
+
+  // loading pages
+  for(const pageID in pagesTermsTable){
+    pages[pageID] = await Page.findById(pageID);
   }
 
   // ranking the pages
   const ranks = [];
-  for(const pageID in pages){
-    const page = pages[pageID];
+  for(const pageID in pagesTermsTable){
+    const page = pagesTermsTable[pageID];
     ranks.push({
       page: pageID,
       score: rankingFunction({
         queryVector: query,
         pageVector: page,
+        averagePageLength,
         pageID,
         pagesCount,
         terms,
+        pagesTermsTable,
         pages
       })
     });

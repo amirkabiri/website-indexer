@@ -37,6 +37,12 @@
       <i class="text-yellow-500 fas fa-spinner fa-spin fa-2x" v-if="loading"></i>
     </div>
 
+    <div
+      v-if="anythingHasSearched && !loading && result.length && fetchTime"
+      v-text="`query time: ${ fetchTime } seconds`"
+      class="text-gray-400 text-center mb-3"
+    ></div>
+
     <div class="container mx-auto p-5 w-full bg-white rounded shadow-lg" v-if="!loading">
       <div class="p-3 flex flex-col items-center text-gray-500" v-if="result.length === 0 && anythingHasSearched">
         <i class="fas fa-3x fa-meh"></i>
@@ -55,7 +61,7 @@
         <div class="p-3">
           <span v-text="(index + 1) + ' )'" class="text-gray-400"></span>
           <a target="_blank" class="text-blue-500" :href="item.url" v-text="item.url"></a>
-          <div class="grid grid-cols-3 mt-3">
+          <div class="grid grid-cols-4 mt-3">
             <div class="flex flex-col items-center">
               <span class="mb-1 text-gray-500">Terms</span>
               <strong class="text-gray-900" v-text="item.termsCount"></strong>
@@ -67,6 +73,10 @@
             <div class="flex flex-col items-center">
               <span class="mb-1 text-gray-500">Score</span>
               <strong class="text-gray-900" v-text="item.score + '%'"></strong>
+            </div>
+            <div class="flex flex-col items-center">
+              <span class="mb-1 text-gray-500">Length</span>
+              <strong class="text-gray-900" v-text="item.length"></strong>
             </div>
           </div>
         </div>
@@ -86,7 +96,8 @@
         target: '',
         result: [],
         loading: false,
-        anythingHasSearched: false
+        anythingHasSearched: false,
+        fetchTime: Date.now()
       },
       created(){
 
@@ -98,9 +109,11 @@
           this.loading = true;
           this.anythingHasSearched = true;
 
+          let time = Date.now();
           socket.emit('search', this.target, result => {
             this.result = result;
             this.loading = false;
+            this.fetchTime = (Date.now() - time) / 1000;
           })
         }
       }

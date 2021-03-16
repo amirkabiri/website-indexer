@@ -16,6 +16,7 @@ export default function (){
   });
   mongoose.connection.once('open', function() {
     console.log('db connected')
+    // require('../sockets/search').default('socket')('hello world', () => null)
   });
 
   connect();
