@@ -13,6 +13,7 @@ const schema = new Schema({
   tokensCount: { type: Number, default: 0 },
   termsCount: { type: Number, default: 0 },
   length: { type: Number, default: 0 },
+  hash: String,
   host: {
     type: Schema.Types.ObjectId,
     ref: 'Host'

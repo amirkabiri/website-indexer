@@ -7,6 +7,7 @@ import HostModel from '../models/host'
 import TermModel from '../models/term'
 import { io } from '../index';
 import calculateHostsOverview from "../libs/calculateHostsOverview";
+import md5 from "../libs/md5";
 
 const emitOverview = async () => io.emit('overview', await calculateHostsOverview())
 
@@ -43,6 +44,7 @@ export default socket => async startPoint => {
       // if Content-Type of page is not text/html, then continue
       if(!extractor) continue;
 
+      const hash = md5(extractor.html);
       const texts = extractor.extractTexts();
       const links = extractor.extractLinks();
       const tokens = tokenizer(texts);
@@ -62,6 +64,7 @@ export default socket => async startPoint => {
       page.tokensCount = tokens.length;
       page.termsCount = termsCount;
       page.length = texts.length;
+      page.hash = hash;
       await page.save();
 
       for(const value in terms){
