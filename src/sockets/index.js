@@ -5,6 +5,10 @@ import stemmer from '../libs/stemmer'
 import PageModel from '../models/page'
 import HostModel from '../models/host'
 import TermModel from '../models/term'
+import { io } from '../index';
+import calculateHostsOverview from "../libs/calculateHostsOverview";
+
+const emitOverview = async () => io.emit('overview', await calculateHostsOverview())
 
 export const ROUTE = 'index';
 
@@ -24,6 +28,8 @@ export default socket => async startPoint => {
   }catch (e){
     return console.log(e);
   }
+
+  emitOverview();
 
   while(queue.length){
     try{
@@ -76,6 +82,8 @@ export default socket => async startPoint => {
         if(!isHostNamesSame(link, startPoint)) continue;
         queue.push(link);
       }
+
+      emitOverview();
     }catch(e){
       console.log(e)
     }
@@ -87,4 +95,6 @@ export default socket => async startPoint => {
   }catch (e){
     console.log(e)
   }
+
+  emitOverview();
 }

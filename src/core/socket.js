@@ -12,10 +12,6 @@ export default function (http){
     const files = all_files.filter(file => file[0] !== '_');
     const onConnect = all_files.includes('_connect.js') ? require(path.join(SOCKETS_DIR, '_connect.js')).default : () => null;
 
-    setInterval(async () => {
-      io.emit('overview', await require("../libs/calculateHostsOverview").default())
-    }, 10000)
-
     io.on('connection', socket => {
       onConnect(socket);
 

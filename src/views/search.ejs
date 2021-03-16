@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+
+  <title>Index</title>
+
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500&display=swap" rel="stylesheet">
+  <link href="https://unpkg.com/tailwindcss@^2/dist/tailwind.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.2/css/all.min.css">
+
+  <style>
+    body{
+      font-family: 'Montserrat', sans-serif;
+      font-size:14px;
+    }
+  </style>
+</head>
+<body class="bg-gray-50">
+  <div id="app">
+    <div class="h-8 flex items-center justify-center mt-10 mb-8">
+      <input
+        v-model="target"
+        type="text"
+        class="h-full px-2 py-1 w-72 rounded-l shadow-md"
+        placeholder="Enter something to search"
+        @keypress.enter="search"
+      >
+      <button
+        :class="`bg-blue-${ target.length ? 500 : 300 } text-white h-full px-3 rounded-r shadow-lg`"
+        @click="search()"
+      >Search</button>
+    </div>
+
+    <div class="w-full flex justify-center">
+      <i class="text-yellow-500 fas fa-spinner fa-spin fa-2x" v-if="loading"></i>
+    </div>
+
+    <div class="container mx-auto p-5 w-full bg-white rounded shadow-lg" v-if="!loading">
+      <div class="p-3 flex flex-col items-center text-gray-500" v-if="result.length === 0">
+        <i class="fas fa-3x fa-meh"></i>
+        <h3 class="text-lg">Meh!</h3>
+        <p class="mt-2">Your query did not match any documents.</p>
+      </div>
+
+      <div v-for="(item, index) of result" class="w-full">
+        <div class="p-3">
+          <span v-text="(index + 1) + ' )'" class="text-gray-400"></span>
+          <a target="_blank" class="text-blue-500" :href="item.url" v-text="item.url"></a>
+          <div class="grid grid-cols-3 mt-3">
+            <div class="flex flex-col items-center">
+              <span class="mb-1 text-gray-500">Terms</span>
+              <strong class="text-gray-900" v-text="item.termsCount"></strong>
+            </div>
+            <div class="flex flex-col items-center">
+              <span class="mb-1 text-gray-500">Tokens</span>
+              <strong class="text-gray-900" v-text="item.tokensCount"></strong>
+            </div>
+            <div class="flex flex-col items-center">
+              <span class="mb-1 text-gray-500">Score</span>
+              <strong class="text-gray-900" v-text="item.score + '%'"></strong>
+            </div>
+          </div>
+        </div>
+        <hr v-if="index !== result.length - 1" class="my-3" />
+      </div>
+    </div>
+  </div>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vue@2.6.12/dist/vue.js"></script>
+  <script>
+    const socket = io();
+
+    const vue = new Vue({
+      el: '#app',
+      data: {
+        target: '',
+        result: [],
+        loading: false
+      },
+      created(){
+
+      },
+      methods: {
+        search(){
+          const target = this.target.trim();
+          if(!target.length) return;
+          this.loading = true;
+
+          socket.emit('search', this.target, result => {
+            this.result = result;
+            this.loading = false;
+          })
+        }
+      }
+    })
+  </script>
+</body>
+</html>
