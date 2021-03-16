@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
 
-  <title>Index</title>
+  <title>Search</title>
 
   <link rel="preconnect" href="https://fonts.gstatic.com">
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500&display=swap" rel="stylesheet">
@@ -38,10 +38,17 @@
     </div>
 
     <div class="container mx-auto p-5 w-full bg-white rounded shadow-lg" v-if="!loading">
-      <div class="p-3 flex flex-col items-center text-gray-500" v-if="result.length === 0">
+      <div class="p-3 flex flex-col items-center text-gray-500" v-if="result.length === 0 && anythingHasSearched">
         <i class="fas fa-3x fa-meh"></i>
         <h3 class="text-lg">Meh!</h3>
         <p class="mt-2">Your query did not match any documents.</p>
+      </div>
+
+      <div class="p-3 flex flex-col items-center text-gray-500" v-if="!anythingHasSearched">
+        <p class="text-lg mb-2"><strong><%= pagesCount %></strong> pages of <strong><%= hostsCount %></strong> websites have indexed!</p>
+        <p class="mb-1">This search engine only retrieve data from indexed pages and indexing process is not automatic.</p>
+        <p class="mb-1">First, you should tell this search engine to index specific website.</p>
+        <p>If your target website is not indexed, add that website <a href="/index" class="text-blue-500">from this page</a>.</p>
       </div>
 
       <div v-for="(item, index) of result" class="w-full">
@@ -78,7 +85,8 @@
       data: {
         target: '',
         result: [],
-        loading: false
+        loading: false,
+        anythingHasSearched: false
       },
       created(){
 
@@ -88,6 +96,7 @@
           const target = this.target.trim();
           if(!target.length) return;
           this.loading = true;
+          this.anythingHasSearched = true;
 
           socket.emit('search', this.target, result => {
             this.result = result;
