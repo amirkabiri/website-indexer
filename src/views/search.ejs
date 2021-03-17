@@ -116,7 +116,7 @@
       },
       created(){
         const url = new URL(window.location.href);
-        const query = url.searchParams.get('q').trim();
+        const query = (url.searchParams.get('q') || '').trim();
         if(!query.length) return;
 
         this.target = query;
