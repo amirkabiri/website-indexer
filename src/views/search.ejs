@@ -100,7 +100,19 @@
         fetchTime: Date.now()
       },
       created(){
+        const url = new URL(window.location.href);
+        const query = url.searchParams.get('q').trim();
+        if(!query.length) return;
 
+        this.target = query;
+        this.search();
+      },
+      watch: {
+        target(target){
+          const url = new URL(window.location.href);
+          url.searchParams.set('q', target);
+          history.pushState({}, null, url.toString());
+        }
       },
       methods: {
         search(){
