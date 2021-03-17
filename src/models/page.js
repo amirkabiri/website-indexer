@@ -19,7 +19,10 @@ const schema = new Schema({
     title: { type: String,  default: '' },
     description: { type: String,  default: '' },
     keywords: { type: String,  default: '' },
-  }
+  },
+  indexedAt: { type: Date, required: true }
+}, {
+  timestamps: true
 })
 
 schema.plugin(autoIncrement.plugin, { model: modelName, field: 'id' });

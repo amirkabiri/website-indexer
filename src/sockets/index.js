@@ -36,7 +36,7 @@ export default socket => async startPoint => {
       if(await PageModel.findOne({ url })) continue;
 
       // create page at first, to prevent crawling pages again that had error
-      const page = await PageModel.create({ url, host });
+      const page = await PageModel.create({ url, host, indexedAt: new Date });
 
       const extractor = await (new Extractor(new URL(url)).fetch());
       // if Content-Type of page is not text/html, then continue

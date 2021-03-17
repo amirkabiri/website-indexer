@@ -136,7 +136,6 @@
       },
       methods: {
         timeago(time){
-          console.log(time, new Date(time))
           return timeago().format(new Date(time));
         },
         summary(str, length = 100){
