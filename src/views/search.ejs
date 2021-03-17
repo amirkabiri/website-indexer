@@ -64,7 +64,7 @@
             <h2 class="text-lg mb-1 text-blue-500" v-text="summary(item.meta.title, 50)"></h2>
           </a>
           <p class="text-gray-500" v-text="summary(item.meta.description, 200)"></p>
-          <div class="grid grid-cols-4 mt-3">
+          <div class="flex justify-around mt-3">
             <div class="flex flex-col items-center">
               <span class="mb-1 text-gray-500">Terms</span>
               <strong class="text-gray-900" v-text="item.termsCount"></strong>
@@ -80,6 +80,10 @@
             <div class="flex flex-col items-center">
               <span class="mb-1 text-gray-500">Length</span>
               <strong class="text-gray-900" v-text="item.length"></strong>
+            </div>
+            <div class="flex flex-col items-center" v-if="item.indexedAt !== undefined">
+              <span class="mb-1 text-gray-500">Indexed at</span>
+              <strong class="text-gray-900" v-text="timeago(item.indexedAt)"></strong>
             </div>
           </div>
         </div>
@@ -100,6 +104,7 @@
     </div>
   </div>
 
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/timeago.js/2.0.2/timeago.min.js" integrity="sha512-sl01o/gVwybF1FNzqO4NDRDNPJDupfN0o2+tMm4K2/nr35FjGlxlvXZ6kK6faa9zhXbnfLIXioHnExuwJdlTMA==" crossorigin="anonymous"></script>
   <script src="/socket.io/socket.io.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/vue@2.6.12/dist/vue.js"></script>
   <script>
@@ -130,6 +135,10 @@
         }
       },
       methods: {
+        timeago(time){
+          console.log(time, new Date(time))
+          return timeago().format(new Date(time));
+        },
         summary(str, length = 100){
           if(str.length <= length) return str;
           return str.slice(0, length) + ' ...';
