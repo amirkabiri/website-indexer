@@ -34,7 +34,7 @@ export default socket => async startPoint => {
 
   while(queue.length){
     try{
-      const url = queue.pop();
+      const url = queue.shift();
       if(await PageModel.findOne({ url })) continue;
 
       // create page at first, to prevent crawling pages again that had error
