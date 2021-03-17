@@ -18,7 +18,7 @@
   </style>
 </head>
 <body class="bg-gray-50">
-  <div id="app">
+  <div id="app" class="container mx-auto">
     <div class="h-8 flex items-center justify-center mt-10 mb-8">
       <input
         v-model="target"
@@ -43,7 +43,7 @@
       class="text-gray-400 text-center mb-3"
     ></div>
 
-    <div class="container mx-auto p-5 w-full bg-white rounded shadow-lg" v-if="!loading">
+    <div class="p-5 w-full bg-white rounded shadow-lg" v-if="!loading">
       <div class="p-3 flex flex-col items-center text-gray-500" v-if="result.length === 0 && anythingHasSearched">
         <i class="fas fa-3x fa-meh"></i>
         <h3 class="text-lg">Meh!</h3>
@@ -59,8 +59,11 @@
 
       <div v-for="(item, index) of result" class="w-full">
         <div class="p-3">
-          <span v-text="(index + 1) + ' )'" class="text-gray-400"></span>
-          <a target="_blank" class="text-blue-500" :href="item.url" v-text="item.url"></a>
+          <a target="_blank" :href="item.url">
+            <span class="text-gray-500" v-text="summary(item.url, 80)"></span>
+            <h2 class="text-lg mb-1 text-blue-500" v-text="summary(item.meta.title, 50)"></h2>
+          </a>
+          <p class="text-gray-500" v-text="summary(item.meta.description, 200)"></p>
           <div class="grid grid-cols-4 mt-3">
             <div class="flex flex-col items-center">
               <span class="mb-1 text-gray-500">Terms</span>
@@ -82,6 +85,18 @@
         </div>
         <hr v-if="index !== result.length - 1" class="my-3" />
       </div>
+    </div>
+
+    <p class="text-center mt-14 mb-3 text-gray-500">
+      An open-source project developed with <i class="fas fa-heart text-red-500"></i> by <a class="text-blue-500" href="https://akdev.ir">Amir Kabiri</a>
+    </p>
+    <div class="grid grid-cols-3 text-center gap-1 mb-8">
+      <a class="text-blue-500" href="#">Project repository</a>
+      <a class="text-blue-500" href="https://akdev.ir/">My personal website</a>
+      <a class="text-blue-500" href="https://github.com/amirkabiri">My github</a>
+      <a class="text-blue-500" href="https://en.wikipedia.org/wiki/Information_retrieval">Information retrieval</a>
+      <a class="text-blue-500" href="https://en.wikipedia.org/wiki/Vector_space_model">Vector space model</a>
+      <a class="text-blue-500" href="https://en.wikipedia.org/wiki/Tf%E2%80%93idf">TD-IDF</a>
     </div>
   </div>
 
@@ -115,6 +130,10 @@
         }
       },
       methods: {
+        summary(str, length = 100){
+          if(str.length <= length) return str;
+          return str.slice(0, length) + ' ...';
+        },
         search(){
           const target = this.target.trim();
           if(!target.length) return;
