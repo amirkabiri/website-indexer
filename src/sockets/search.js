@@ -12,9 +12,10 @@ export default socket => async (target, emit) => {
   const pages = {};
   const pagesTermsTable = {};
   const pagesCount = await Page.countDocuments();
-  const averagePageLength = (await Page.aggregate([
+  let averagePageLength = (await Page.aggregate([
     { $group: { _id: "", length: {$avg : "$length" }} }
-  ]))[0].length;
+  ]));
+  averagePageLength = averagePageLength.length ? averagePageLength[0].length : 0;
 
   // calculating query terms and frequencies
   for(const value of stemmer(tokenizer(target))){
