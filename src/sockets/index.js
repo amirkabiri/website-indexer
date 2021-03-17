@@ -65,6 +65,7 @@ export default socket => async startPoint => {
       page.termsCount = termsCount;
       page.length = texts.length;
       page.hash = hash;
+      page.meta = extractor.extractMeta();
       await page.save();
 
       for(const value in terms){

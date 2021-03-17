@@ -14,9 +14,11 @@ const schema = new Schema({
   termsCount: { type: Number, default: 0 },
   length: { type: Number, default: 0 },
   hash: String,
-  host: {
-    type: Schema.Types.ObjectId,
-    ref: 'Host'
+  host: { type: Schema.Types.ObjectId, ref: 'Host' },
+  meta: {
+    title: { type: String,  default: '' },
+    description: { type: String,  default: '' },
+    keywords: { type: String,  default: '' },
   }
 })
 

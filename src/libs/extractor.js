@@ -28,7 +28,7 @@ export default class Extractor{
   extractTexts(){
     const { document } = this;
     let queue = [...document.body.children];
-    let result = '';
+    let result = Object.values(this.extractMeta()).join(' ');
 
     while(queue.length){
       const el = queue.pop();
@@ -69,5 +69,19 @@ export default class Extractor{
     }
 
     return result;
+  }
+
+  extractMeta(){
+    const { document } = this;
+
+    const title = document.head.querySelector('title');
+    const description = document.head.querySelector('meta[name="description"]');
+    const keywords = document.head.querySelector('meta[name="keywords"]');
+
+    return {
+      title: title ? title.textContent : '',
+      description: description ? description.getAttribute('content') : '',
+      keywords: keywords ? keywords.getAttribute('content') : ''
+    }
   }
 }
