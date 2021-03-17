@@ -30,8 +30,6 @@ export default socket => async startPoint => {
     return console.log(e);
   }
 
-  emitOverview();
-
   while(queue.length){
     try{
       const url = queue.shift();
