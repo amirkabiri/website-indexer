@@ -7,11 +7,14 @@ export default function urlNormalizer(url){
     url = new URL(url)
   }
 
-  if(url.hostname.substr(0, 4) === 'www.'){
+  if(url.hostname.toLowerCase().substr(0, 4) === 'www.'){
     url.hostname = url.hostname.substr(4)
   }
 
   url.hash = '';
 
-  return url.toString()
+  return url
+    .toString()
+    .toLowerCase()
+    .replace(/(\/|#)+$/g, '')
 }

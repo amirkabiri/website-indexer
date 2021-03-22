@@ -3,6 +3,7 @@ import { createServer } from 'http'
 import path from "path";
 import Page from "../models/page";
 import Host from "../models/host";
+import Queue from "../models/queue";
 
 export default function (PORT){
   const app = express();
@@ -20,6 +21,34 @@ export default function (PORT){
     const pagesCount = await Page.countDocuments();
     const hostsCount = await Host.countDocuments();
     res.render('search', { pagesCount, hostsCount });
+  });
+
+  app.get('/api/queue', async (req, res) => {
+    const options = {};
+
+    if(req.query.limit){
+      options.limit = +req.query.limit;
+    }
+    if(req.query.sort){
+      options.sort = { createdAt: +req.query.sort };
+    }
+
+    const items = await Queue.find({}, null, options);
+    res.json(items.map(item => item.url));
+  });
+
+  app.get('/api/pages', async (req, res) => {
+    const options = {};
+
+    if(req.query.limit){
+      options.limit = +req.query.limit;
+    }
+    if(req.query.sort){
+      options.sort = { createdAt: +req.query.sort };
+    }
+
+    const items = await Page.find({}, null, options);
+    res.json(items.map(item => item.url));
   });
 
   http.listen(PORT, () => console.log('server is running on port ' + PORT))
