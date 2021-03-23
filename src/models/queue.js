@@ -9,6 +9,10 @@ const schema = new Schema({
     set: url => urlNormalizer(url),
     unique: true
   },
+  priority: { type: Number, default: 0 },
+  childPriority: { type: String, default: 'p => Math.max(0, p - 1)' },
+  depth: { type: Number, default: -1 },
+  payload: { type: String }
 }, { timestamps: true });
 
 export default mongoose.model(modelName, schema);
