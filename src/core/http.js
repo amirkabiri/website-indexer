@@ -13,14 +13,14 @@ export default function (PORT){
   app.set('views', path.join(__dirname, '../views'));
   console.log(path.join(__dirname, '../views'))
 
-  app.get('/index', (req, res) => {
-    res.render('index');
-  });
-
-  app.get('/search', async (req, res) => {
+  app.get('/', async (req, res) => {
     const pagesCount = await Page.countDocuments();
     const hostsCount = await Host.countDocuments();
     res.render('search', { pagesCount, hostsCount });
+  });
+
+  app.get('/index', (req, res) => {
+    res.render('index');
   });
 
   app.get('/api/queue', async (req, res) => {
