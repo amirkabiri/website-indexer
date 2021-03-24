@@ -16,7 +16,7 @@ const emitOverview = async () => io.emit('overview', await calculateHostsOvervie
 
 export default async function indexURL(){
   // get oldest item in queue
-  const target = await QueueModel.findOne().sort({ createdAt : 1 });
+  const target = await QueueModel.findOne().sort({ priority: -1, createdAt : 1 });
   if(!target) return true;
   const { url } = target;
 
@@ -43,7 +43,6 @@ export default async function indexURL(){
 
     const hash = md5(extractor.html);
     const texts = extractor.extractTexts();
-    const links = extractor.extractLinks();
     const tokens = tokenizer(texts);
     const stemmedTokens = stemmer(tokens);
     const terms = {};
@@ -79,11 +78,26 @@ export default async function indexURL(){
       term.save();
     }
 
-    // find new links from this page and add them to queue
-    for(const link of links){
-      if(!isHostNamesSame(link, url)) continue;
+    if(target.depth === -1 || target.depth > 0){
+      // find new links from this page and add them to queue
+      const links = extractor.extractLinks();
+      for(const link of links){
+        if(!isHostNamesSame(link, url)) continue;
 
-      await addURLToQueue(link);
+        let priority;
+        try{
+          priority = +eval(`(${ target.childPriority })(${ target.priority })`);
+          if(typeof priority !== 'number' || isNaN(priority)) throw new Error();
+        }catch (e){
+          priority = 0;
+        }
+
+        await addURLToQueue(link, {
+          priority,
+          childPriority: target.childPriority,
+          depth: target.depth === -1 ? -1 : (target.depth - 1),
+        });
+      }
     }
   } catch (e){
     console.log(e)
