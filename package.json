@@ -2,8 +2,12 @@
   "name": "website-indexer",
   "version": "1.0.0",
   "scripts": {
-    "dev": "node -r esm ./src/index.js",
-    "watch": "nodemon -e js --exec npm run dev"
+    "start:web": "node -r esm ./src/web.js",
+    "watch:web": "nodemon -e js --exec npm run start:web",
+    "start:indexer": "node -r esm ./src/indexer.js",
+    "watch:indexer": "nodemon -e js --exec npm run start:indexer",
+    "start:trie": "node -r esm ./src/trie.js",
+    "watch:trie": "nodemon -e js --exec npm run start:trie"
   },
   "dependencies": {
     "axios": "^0.21.1",
@@ -12,6 +16,7 @@
     "esm": "^3.2.25",
     "express": "^4.17.1",
     "jsdom": "^16.4.0",
+    "lodash": "^4.17.21",
     "mongoose": "^5.11.18",
     "mongoose-auto-increment": "^5.0.1",
     "natural": "^4.0.0",

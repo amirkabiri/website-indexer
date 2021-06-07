@@ -11,7 +11,6 @@ export default function (PORT){
 
   app.set('view engine', 'ejs');
   app.set('views', path.join(__dirname, '../views'));
-  console.log(path.join(__dirname, '../views'))
 
   app.get('/', async (req, res) => {
     const pagesCount = await Page.countDocuments();

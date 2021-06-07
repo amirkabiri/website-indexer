@@ -19,6 +19,12 @@ export default function (){
     // require('../sockets/search').default('socket')('hello world', () => null)
   });
 
+  process.on('SIGINT', function() {
+    mongoose.connection.close(function () {
+      process.exit(0);
+    });
+  });
+
   connect();
 
   return mongoose;

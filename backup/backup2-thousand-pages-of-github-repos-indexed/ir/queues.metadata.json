@@ -1,0 +1,1 @@
+{"indexes":[{"v":{"$numberInt":"2"},"key":{"_id":{"$numberInt":"1"}},"name":"_id_"},{"v":{"$numberInt":"2"},"unique":true,"key":{"url":{"$numberInt":"1"}},"name":"url_1","background":true}],"uuid":"cab4dff75b14488fb4424f725f2ebbe2","collectionName":"queues"}

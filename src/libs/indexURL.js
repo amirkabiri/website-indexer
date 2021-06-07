@@ -7,12 +7,10 @@ import tokenizer from "./tokenizer";
 import stemmer from "./stemmer";
 import TermModel from "../models/term";
 import isHostNamesSame from "./isHostNamesSame";
-import { io } from "../index";
 import calculateHostsOverview from "./calculateHostsOverview";
 import shouldCrawlURL from "./shouldCrawlURL";
 import addURLToQueue from "./addURLToQueue";
 
-const emitOverview = async () => io.emit('overview', await calculateHostsOverview())
 
 export default async function indexURL(){
   // get oldest item in queue
@@ -110,6 +108,6 @@ export default async function indexURL(){
     await host.save();
 
     // send statistics to users
-    emitOverview();
+    // emitOverview();
   }
 }

@@ -3,14 +3,11 @@ import stemmer from '../libs/stemmer'
 import Term from '../models/term'
 import Page from '../models/page'
 import rankingFunction from "../libs/rankingFunction";
+import { trie } from "../web";
 
 export const ROUTE = 'search';
 
 export default socket => async (target, emit) => {
-  let query = {};
-  const terms = {};
-  const pages = {};
-  const pagesTermsTable = {};
   const pagesCount = await Page.countDocuments();
   let averagePageLength = (await Page.aggregate([
     { $group: { _id: "", length: {$avg : "$length" }} }
@@ -18,13 +15,18 @@ export default socket => async (target, emit) => {
   averagePageLength = averagePageLength.length ? averagePageLength[0].length : 0;
 
   // calculating query terms and frequencies
+  let query = {};
   for(const value of stemmer(tokenizer(target))){
     query[value] = (value in query ? query[value] : 0) + 1;
   }
 
   // loading terms from db
+  const terms = {};
   for(const value in query){
-    const term = await Term.findOne({ value });
+    // const term = await Term.findOne({ value });
+    const id = trie.searchTermID(value);
+    if(id === null) continue;
+    const term = await Term.findById(id);
     if(term){
       terms[value] = term;
     }
@@ -38,6 +40,7 @@ export default socket => async (target, emit) => {
   }
 
   // calculation document vectors (pagesTermsTable object)
+  const pagesTermsTable = {};
   for(const term of Object.values(terms)){
     for(const page of term.pages){
        if(pagesTermsTable[page._id] === undefined){
@@ -49,6 +52,7 @@ export default socket => async (target, emit) => {
   }
 
   // loading pages
+  const pages = {};
   for(const pageID in pagesTermsTable){
     pages[pageID] = await Page.findById(pageID);
   }

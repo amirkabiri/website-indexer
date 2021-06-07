@@ -107,11 +107,16 @@ export default class TrieStructure{
     return this;
   }
 
-  traverse(fn){
-    let queue = [this.tree];
+  *traverse(startNode = this.tree){
+    const stack = [startNode];
 
-    while (queue.length){
+    while(stack.length){
+      const node = stack.pop();
+      yield node;
 
+      for(let chr in node.children){
+        stack.push(node.children[chr]);
+      }
     }
   }
 }
