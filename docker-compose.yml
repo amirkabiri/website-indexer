@@ -1,0 +1,16 @@
+version: "3"
+services:
+  mongo:
+    container_name: mongo
+    image: mongo
+  web:
+    container_name: web
+    restart: on-failure
+    build: .
+    ports:
+      - "80:3000"
+    links:
+      - mongo
+    environment:
+      - DATABASE_URL=mongodb://mongo:27017/ir
+      - PORT=3000
